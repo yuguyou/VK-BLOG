@@ -1,0 +1,218 @@
+* 面向对象
+  对象是一种复合值，将很多值聚合到一起，可通过名字访问这些值
+  对象也可以看做是属性的无序集和
+
+** 数据类型
+   - 一般语言用栈储存原始类型，用堆储存引用类型，javascript使用一个变量对象追踪变量的生存期
+   - 原始类型、引用类型是js的两种基本数据类型
+   - typeof 查看数据类型 ;; typeof 10;  // number
+*** 数据对应的原始类型
+    1. 原始类型数据保存的是简单数据值。原始值保存在变量对象内
+    2. 五种原始类型
+       - boolean  拥有方法    值为true / false
+       - number   拥有方法
+       - string   拥有方法
+       - null       无方法    可以理解为null 是一个空的对象指针          ;; typeof null;  // object
+       - undefine   无方法    值为undefine
+*** 数据对应的引用类型
+    所有引用类型都继承自Object
+    1. 引用类型数据保存为引用值(对象)，本质是指向内存位置的引用。
+       引用值作为一个指针保存在变量对象内，指针指向对象在内存中的储存位置，赋值给变量时实际为拷贝指针
+    2. 引用值是引用类型的实例，为对象的同义词，对象代指引用值(对象为类的实例)
+    3. 创建对象
+       - 使用new、构造函数，首字母大写为构造函数与非构造函数的区分
+       - 解除对象引用与垃圾回收：当对象不再引用后，垃圾回收器将对内存释放。解除对象引用最佳的方法是将对象变量置为null
+    4. 內建引用类型
+       內建引用类型可在任何时候被实例化  可用 new xxxxx; 实例化每个內建类型
+          - Array
+          - Date
+          - Error
+          - Function
+          - Object
+          - RegExp 正则
+    5. 引用类型的字面形式
+       1. 字面形式允许在不需要使用new操作符号和构造函数显示创建对象的情况下生成引用值
+       2. 对象和数组的字面形式
+          大括号使用字面形式创建对象 // {a: xxx, b: xxx}
+          javascript使用字面形式创建对象背后作工作与和new Object()一样,其他引用类型的字面形式也是一样
+       3. 基本上定义函数、正则表达式都是用的字面形式来定义
+    6. 引用类型鉴别方法
+       instanceof 操作符鉴别继承类型 ;; xxx instanceof Array;
+
+*** 原始封装类型
+    1. 三种原始封装类型（引用类型）： String、Number、Boolean
+    2. 当读取字符串、数字、或布尔值时(xxx.chartAt(0))，javaScript引擎将自动创建原始封装类型的零时对象让chartAt(0)工作,读取之后零时对象便被销毁
+
+
+** 函数
+*** 函数就是对象(引用值)
+   1. 函数即为一个对象(引用类型Function的实例)，对象的内部'[ [call] ]'(该属性包含了该函数的执行指令)属性为函数独有，表明该对象可以被执行
+      typeof 操作符会在对象内部查找内部属性'[ [call] ]',若查到即返回funciton
+   2. 函数是对象，所以非常灵活： 象对象一样操作函数，将他赋值给变量，添加到对象中，当成参数传递，当作返回值返回
+*** 函数的两种字面形式： 声明式、表达式
+    - 声明式： 以关键字function开头，后跟函数名  ;; 如 function test() {}
+    - 表达式： 以关键字function开头, 后不需要跟函数名（匿名函数），表达式被变量引用   ;; 如 test = function() {}
+*** 函数参数
+    函数是一个对象，传入函数的参数将存为函数对象的属性argument中
+    - 函数传入的参数被保存在类是数组的argument对象中（并非Array），argument.length可查看参数长度
+    - 函数定义的命名参数并非限制参数长度，而是方便调用，每个函数可传任意长度参数
+*** 重载
+    函数赋值给变量的是一个引用值，同名函数只有最后一个有效
+*** this
+    1. this在函数作用域中等于函数自身对象
+    2. 改变this的三个方法
+       - call(Obj, param)    指定this值和参数名来执行函数，      立即执行
+       - apply(Obj, [x,x])   指定this值、将参数传到arguments，   立即执行
+       - bind(Obj， param)   永久绑定this与参数值，              再次调用函数才执行函数
+
+
+** 对象  ;; 属性的无序集合
+*** 定义属性
+    1. 新增属性
+       当对象新增一个属性时，javascript将调用[ [Put] ]的内部方法在对象上创建一个新节点来保存属性（将定义初始值和属性的特征）
+    2. 属性修改
+       当已有属性被赋值新值时，javasctipt将调用[ [Set] ]的内部方法将当前值替换为新值
+*** 检测属性
+    - if   ;; if方法不能判断值为 否 的属性，如 0，false， null
+    - in   ;; in方法将遍历所有自有属性与原型属性，不会评估属性值，对性能有益
+    - hasOwnProperty()   ;; 只会检查自有属性，不会检测到原型属性
+*** 删除属性
+    - delete delete将调用对象内部方法[ [Delete] ]彻底删除属性（某些属性无法被移出）
+      例： delete testObject.name
+*** 属性枚举
+    - 属性中都有内部特征[ [Enumerable] ]标识该属性是否为可枚举属性
+    - 可用propertyIsEnumerable()检查属性是否可枚举
+      例： testObject.propertyIsEnumerable(name)
+    1. for (x in Object) {}
+       会遍历原型属性与自有属性的可枚举属性
+    2. Object.key()
+       只会返回自有属性的可枚举属性的key,
+*** 属性类型(两种属性：数据属性、访问器属性)
+    - 属性的通用特征
+      - [ [Enumerable] ] ： 是否可遍历该属性
+      - [ [Configurable] ] ： 是否可配置该属性（是否可删除可修改该属性），不可把不可配置属性变成可配置属性
+    - 定义属性的特征
+      - Object.defineProperty
+        - Object.defineProperty(obj, '属性名', {value: xx, enumerable: true, configurable, writable: true})
+          - defineProperty方法接受三个参数：拥有该属性的对象、属性名、属性的描述对象
+          - 当属性不存在时，将创建属性，使用defineProperty创建属性时，布尔类型的特征不被指定时会被默认设置为false
+          - 当属性存在时，只有指定的特征会被改变
+        - Object.defineProperties(obj, {'属性名', {value: xx, enumerable: true, configurable, writable: true}...})
+    - 获取属性的特征
+      - Object.getOwnPropertyDescriptor(obj, name)
+        - 接受两个参数: 对象、属性名
+    - 数据属性：
+      - [ [Put] ]方法默认创建数据属性
+      - Object.defineProperty(obj, '属性名', {value: xx, enumerable: true, configurable, writable: true})
+      - 数据属性两个特有的特征
+        1. [ [Value] ]，所有属性的值都保存在[ [Value] ] 中
+        2. [ [Writable] ]，该特征为一个布尔值，指示该属性是否可以写入。
+    - 访问器属性：
+      - 定义当属性被读取时调用的函数(getter)或属性被写入时调用的函数(settr)
+      - 改变属性特征(Object.defineProperty)
+        - Object.defineProperty(obj, '属性名', {enumerable: true, configurable, get: function(){xxxxx}, set: function(){xxxx}})
+      - 访问属性两个特有的特征
+        1. [ [Get] ]：内涵getter函数
+        2. [ [Set] ]：内涵setter函数
+*** 禁止修改对象的三种方法
+    - [ [Extensible] ] 指明该对象是否被修改
+    - Object.isExtensible() 检查[ [Extensible] ]
+**** 禁止扩展
+     - Object.preventExtensions(obj)
+       - 将对象内部特征[ [Extensible] ]置为false
+       - 创建一个不可扩增的对象
+       - 无法再给目标对象添加新属性
+**** 对象封印
+     - Object.seal(obj) 将[ [Extensible] ]置为false，所有属性的[ [Configurable] ]特征置为false
+     - Object.isSealed(obj)判断一个对象是否被封印
+     - 被封印的对象不可扩展并且所有属性都不可配置、不能添加属性、删除属性、改变属性类型、只能读写属性
+**** 对象冻结
+     - Object.freeze(obj) 冻结对象
+     - Object.isFrozen(obj) 判断对象是否被冻结
+     - 被冻结的对象不可不能添加属性、删除属性、改变属性类型、不能写入任何数据属性，只能读属性
+
+
+** 构造函数和原型对象
+*** 构造函数
+    - 构造函数时用new创建对象调用的函数，函数名首字母大写
+      - 不传递参数时可不使用小括号
+        如 person1 = new Person;
+    - 自定义构造函数创建出来的对象，其构造函数属性指向创建它的构造函数
+      如 person1.constructor = Person;
+    - 若构造函数中显示的调用return
+      - return返回的值是一个对象，它会代替新创建的对象实例返回
+      - return返回的值是一个原始类型，将会被忽略返回新创建的对象实例
+    - 构造函数中可用Object.defineproperty()方法初始化对象属性
+    - 构造函数并没有消除代码冗余，10个对象实例将会有100个相同的函数作同样的事情
+*** 原型对象 ;; 所有对象的基类
+    - 几乎所有的函数都prototype属性，该属性是一个原型对象用来创建新的对象实例
+    - Xxxx.prototype 原型对象，对象实例与构造函数(constructor)通过原型对象相连
+    1. [ [prototype] ] 原型属性
+       - 对象实例中的[ [Prototype] ]属性指向该实例的构造函数的原型对象
+       - __proto__ 可直接读写[ [Prototype] ] 属性
+       - 原型属性判断
+         - Object.getPrototypeOf(obj)读取obj对象的[ [Prototype] ]属性值
+         - isPrototypeOf(obj) 检查某一对象是否是另一个对象的原型对象，该方法存在所有对象中
+       - 读取对象属性时，先查找对象的自有属性，再查找对象的原型属性
+       - delete 只能删除自有属性，不能删除原型属性
+    2. 在构造函数中使用原型对象
+       - 原型对象的共享机制可一次性为所有对象定义方法
+       - 在原型方法中可用this获取实例的数据
+       - 注意在原型对象上储存其他类型数据，数据值将被多个实例共享
+       - 注意直接使用对象字面形式替换原型对象，如Person.prototype = {xxx}，将改变构造函数属性(->Object)，改变constructor属性指向
+       - 当一个函数被创建时，他的prototype属性也被创建，该原型对象的constructor属性指向该函数
+    3. 改变原型对象
+       - 改变原型对象将会改变所有适应该对象创建的实例中的原型对象方法
+       - 对象实例被冻结或封印后，仍然可通过原型对象来改变对象实例([ [prototype] ]只是一个指针指向原型对象)
+    4. 內建函数对象的原型对象
+       - 通过改变原型对象也可改变javascript引擎的标准內建对象或內建原始封装类型的原型对象。
+         例 Array.prototype.xxx = xxxx
+            String.prototype.xxx = xxxx
+
+
+** 继承
+   - 原型对象继承
+   - 伪类继承
+   - 混入继承
+*** 原型对象链和Object.prototype
+     1. Javascript內建的继承方法被称为[原型对象链]或[原型对象继承]
+     2. 原型对象链：对象继承其原型对象，而原型对象继承它的原型对象
+     3. 所有对象都默认继承自Object.prototype
+     4. 访问一个对象属性是，javascript引擎默认先搜索对象的自有属性，如果没发现该属性则搜索对象的原型对象[ [Prototype] ]，直到继承链末端
+     5. Object.prototype的方法
+        - hasOwnProperty
+        - propertyIsEnumerable
+        - isPrototypeOf
+        - valueOf 返回一个对象的值表达。 每当一个操作符被用于一个对象是就会调用valueOf()方法，valueOf默认返回对象实例本身。
+        - toString 返回一个对象的字符串表达。 上述操作当javascript期望是一个字符串时，一旦valueOf()返回的是一个引用而不是原始值的时候，会调用toString()方法
+*** 修改Object.prototype
+     修改Object.prototype对象会导致所有对象的原型对象被修改
+*** 对象继承
+    1. 对象字面形式： 隐式指定Object.prototype为新对象的[ [Prototype] ]
+    2. Object.create([对象], [新对象描述]): 显示指定新对象的[ [Prototype] ]
+    3. Object.create(mull)
+*** 构造函数继承
+    function YourConstructor() {// initialization}
+    => javascript 引擎对上述函数的实现
+    YourConstructor.prototype = Object.creat(Object.prototype, {
+      constructor: {
+        configurable: true,
+        enumerable: true,
+        value: YourConstructor,
+        writable: true,
+      }
+    })
+*** 构造函数窃取
+    可使用call(),apply()调用父类构造函数
+** 对象模式
+   - 模块模式：一种创建拥有私有数据的单件对象的模式(使用IIFE立调函数表达式返回一个对象)
+** 混入
+   - 一个对象在不改变原型对象链的情况下得到了另一个对象的属性被成为混入
+** 作用域安全的构造函数 
+   function Person(name) {
+     if (this instanceof Person) {
+       xxxxxxxx
+     } else {
+       return new Person(name);
+     }
+   }
